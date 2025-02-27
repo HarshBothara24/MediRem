@@ -1,70 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice-enabled Medicine Reminder - README</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
-        h1, h2, h3 { color: #333; }
-        code { background-color: #f4f4f4; padding: 3px 5px; border-radius: 5px; }
-        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
-        ul { margin: 10px 0; }
-    </style>
-</head>
-<body>
-    <h1>Voice-enabled Medicine Reminder</h1>
-    <p>This is a Flask-based AI-powered Medicine Reminder system that extracts medication details from images using OCR and sets reminders based on dosage schedules.</p>
-    
-    <h2>Features</h2>
-    <ul>
-        <li>Extracts medicine details from prescriptions using PaddleOCR</li>
-        <li>Schedules reminders for medications based on dosage frequency</li>
-        <li>Supports image uploads and image URLs for processing</li>
-        <li>Uses Flask as the backend framework</li>
-        <li>Integrates PyTorch for AI-based processing</li>
-    </ul>
+# Voice-enabled Medicine Reminder
 
-    <h2>Installation</h2>
-    <p>Follow these steps to set up and run the project:</p>
-    <pre><code>git clone https://github.com/your-repo/voice-medicine-reminder.git
+## 📌 Project Overview
+The **Voice-enabled Medicine Reminder** is a Flask-based AI-powered application designed to help users manage their medication schedules effectively. It extracts medicine details from prescription images using **OCR (Optical Character Recognition)** and schedules reminders accordingly. The system is particularly useful for senior citizens and individuals with complex medication routines.
+
+---
+
+## 🚀 Features
+- **Prescription Image Processing:** Extracts medicine details from images using PaddleOCR.
+- **Medicine & Dosage Detection:** Identifies medicine names, dosages, and frequencies using regex.
+- **Automated Reminders:** Schedules medicine intake reminders based on the extracted information.
+- **Flask API Endpoints:** Provides RESTful APIs for image upload and text extraction.
+- **Scheduler Integration:** Uses `APScheduler` to trigger reminders at set intervals.
+- **Device Compatibility:** Supports CPU and GPU (CUDA-enabled for PyTorch models).
+
+---
+
+## 🏗️ Tech Stack
+- **Backend:** Flask
+- **Machine Learning:** PyTorch (for AI-based processing)
+- **OCR:** PaddleOCR (for text extraction)
+- **Scheduler:** APScheduler (for reminders)
+- **Image Processing:** PIL (Pillow) and OpenCV
+
+---
+
+## 📦 Installation & Setup
+
+### 🔹 Prerequisites
+Ensure you have the following installed:
+- Python (>=3.8)
+- pip (latest version)
+- Virtual environment (optional but recommended)
+
+### 🔹 Clone the Repository
+```bash
+git clone https://github.com/your-username/voice-medicine-reminder.git
 cd voice-medicine-reminder
+```
+
+### 🔹 Create a Virtual Environment (Optional but Recommended)
+```bash
 python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-pip install -r requirements.txt</code></pre>
+source venv/bin/activate   # On macOS/Linux
+venv\Scripts\activate     # On Windows
+```
 
-    <h2>Required Dependencies</h2>
-    <p>The following libraries are used in this project:</p>
-    <pre><code>
-Flask
-Pillow
-Torch
-Torchvision
-numpy
-paddleocr
-apscheduler
-requests
-    </code></pre>
+### 🔹 Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-    <h2>Running the Application</h2>
-    <p>To start the Flask server, run:</p>
-    <pre><code>python app.py</code></pre>
-    <p>By default, the server runs on <code>http://localhost:5000</code></p>
-    
-    <h2>API Endpoints</h2>
-    <ul>
-        <li><strong>GET /</strong> - Returns the homepage</li>
-        <li><strong>POST /predict</strong> - Accepts an image file or image URL, processes the text, and extracts medicine details</li>
-        <li><strong>GET /apidata</strong> - Test endpoint to check API response</li>
-    </ul>
-    
-    <h2>Example API Request</h2>
-    <p>Send a POST request with an image file:</p>
-    <pre><code>curl -X POST -F "file=@prescription.jpg" http://localhost:5000/predict</code></pre>
-    <p>Or send an image URL:</p>
-    <pre><code>curl -X POST -H "Content-Type: application/json" -d '{"image_url": "https://example.com/image.jpg"}' http://localhost:5000/predict</code></pre>
-    
-    <h2>License</h2>
-    <p>This project is open-source and available under the MIT License.</p>
-</body>
-</html>
+### 🔹 Run the Flask Application
+```bash
+python app.py
+```
+
+### 🔹 Access the API
+Once the server is running, open your browser and navigate to:
+```
+http://127.0.0.1:5000/
+```
+
+---
+
+## 📂 API Endpoints
+### 1️⃣ **Home Route**
+- **Endpoint:** `/`
+- **Method:** GET
+- **Description:** Displays the homepage.
+
+### 2️⃣ **Test API Connection**
+- **Endpoint:** `/apidata`
+- **Method:** GET
+- **Description:** Returns a test message to confirm API availability.
+
+### 3️⃣ **Upload Prescription for Analysis**
+- **Endpoint:** `/predict`
+- **Method:** POST
+- **Description:** Accepts an image file or URL and extracts medicine information.
+- **Request Body:**
+  - `file`: Image file (Multipart Form-Data)
+  - OR `image_url`: Direct image URL (JSON/Form-Data)
+- **Response:**
+```json
+{
+  "extracted_text": "Detected prescription text",
+  "extracted_medicine_data": [
+    "Paracetamol 500mg - 2x daily - 5 days"
+  ]
+}
+```
+
+---
+
+## 🛠️ How the System Works
+1. **Upload Prescription**: Users upload an image of their prescription.
+2. **OCR Processing**: PaddleOCR extracts text from the image.
+3. **Regex Parsing**: Extracted text is processed to detect medicine names, dosages, and schedules.
+4. **Reminder Scheduling**: Using APScheduler, reminders are set at specified times.
+5. **Notification System**: The system prints reminders (extendable to SMS or voice alerts).
+
+---
+
+## 📜 Future Enhancements
+✅ Integrate with Google Home & Alexa for voice reminders 🔊  
+✅ Add SMS or WhatsApp notification support 📲  
+✅ Implement user authentication & medicine history tracking 🔐
+
+---
+
+## 🤝 Contributing
+Feel free to contribute! Follow these steps:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature-xyz`)
+3. Commit your changes (`git commit -m "Added feature XYZ"`)
+4. Push to your branch (`git push origin feature-xyz`)
+5. Open a Pull Request 🚀
+
+---
+
+## 📜 License
+This project is licensed under the **MIT License**.
+
+---
+
+## 📞 Contact
+For queries or collaboration, reach out to:  
+📧 Email: your-email@example.com  
+🐦 Twitter: [@yourhandle](https://twitter.com/yourhandle)  
+💼 LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
+
