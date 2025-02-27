@@ -132,44 +132,32 @@ def apidata():
 # Upload image and run inference
 @app.route('/predict', methods=['POST'])
 def predict():
-    image = None  # Placeholder for the image data
-
     try:
-        # Check if a file is uploaded
-        if 'file' in request.files:
+        image = None  # Placeholder for the image data
+
+        # Check if an image file is uploaded
+        if 'file' in request.files and request.files['file']:
             uploaded_file = request.files['file']
-            if uploaded_file:
-                image = Image.open(uploaded_file).convert("RGB")
+            image = Image.open(uploaded_file).convert("RGB")
 
-        # Check if an image URL is provided (from form-data or JSON)
-        elif request.is_json:
-            json_data = request.get_json(silent=True)  # Safe JSON parsing
-            if isinstance(json_data, dict) and 'image_url' in json_data:
-                image_url = json_data['image_url']
-            else:
-                return jsonify({"error": "Invalid JSON format or missing 'image_url'"})
-        
-        elif 'image_url' in request.form:
-            image_url = request.form.get('image_url')
-
-        else:
-            return jsonify({"error": "No file or image URL provided"})
-
-        # Fetch and process image from URL if provided
-        if image_url:
-            response = requests.get(image_url, timeout=10)
-            response.raise_for_status()  # Raise exception for HTTP errors
-
-            # Check if the response contains an image
-            if 'image' not in response.headers.get('Content-Type', ''):
-                return jsonify({"error": "The provided URL does not point to an image"})
-
-            # Open the image from the response
-            image = Image.open(io.BytesIO(response.content)).convert("RGB")
-
-        # If no valid image is found
+        # Check if an image URL is provided
         if image is None:
-            return jsonify({"error": "Unable to process the image."})
+            image_url = request.form.get('image_url') or (request.get_json(silent=True) or {}).get('image_url')
+
+            if image_url:
+                response = requests.get(image_url, timeout=10)
+                response.raise_for_status()  # Raise an error for HTTP issues
+
+                # Validate that the response contains an image
+                if 'image' not in response.headers.get('Content-Type', ''):
+                    return jsonify({"error": "The provided URL does not point to an image"})
+
+                # Load the image from the response
+                image = Image.open(io.BytesIO(response.content)).convert("RGB")
+
+        # Ensure an image was successfully loaded
+        if image is None:
+            return jsonify({"error": "No valid image file or URL provided."})
 
         # Convert image to NumPy array
         image_np = np.array(image)
@@ -177,22 +165,23 @@ def predict():
         # Debugging: Print image shape
         print("Image shape:", image_np.shape)
 
-        # Extract text using PaddleOCR
+        # Perform OCR using PaddleOCR
         ocr_results = ocr_engine.ocr(image_np, cls=True)
 
-        # Debugging: Print OCR results
+        # Debugging: Print raw OCR results
         print("OCR Raw Results:", ocr_results)
 
-        # Ensure OCR results are not empty
+        # Ensure OCR results are valid
         if not ocr_results or not ocr_results[0]:
             return jsonify({"error": "No text detected in the image."})
 
+        # Extract text from OCR results
         extracted_text = "\n".join([line[1][0] for line in ocr_results[0]])
 
         # Debugging: Print extracted text
         print("Extracted Text:", extracted_text)
-        
-        # Process the extracted text for medicines and syrups
+
+        # Process extracted text for medicine-related data
         extracted_medicine_data = extract_medicine_data(extracted_text)
 
         return jsonify({
@@ -204,8 +193,8 @@ def predict():
         return jsonify({"error": f"Error fetching image from URL: {str(e)}"})
     except Exception as e:
         return jsonify({"error": f"Error processing image: {str(e)}"})
-
-   
+    
+       
 def extract_medicine_data(text):
     # You can customize this function to process the extracted text further
     # Here, I am assuming the text includes medicine and dosage details
