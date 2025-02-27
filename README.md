@@ -34,8 +34,8 @@ Ensure you have the following installed:
 
 ### 🔹 Clone the Repository
 ```bash
-git clone https://github.com/your-username/voice-medicine-reminder.git
-cd voice-medicine-reminder
+git clone https://github.com/HarshBothara24/MediRem.git
+cd MediRem
 ```
 
 ### 🔹 Create a Virtual Environment (Optional but Recommended)
