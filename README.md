@@ -126,7 +126,7 @@ This project is licensed under the **MIT License**.
 
 ## 📞 Contact
 For queries or collaboration, reach out to:  
-📧 Email: your-email@example.com  
-🐦 Twitter: [@yourhandle](https://twitter.com/yourhandle)  
-💼 LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
+📧 Email: harshbothara24@gmail.com  
+🐦 Twitter: https://x.com/HarshBothara24  
+💼 LinkedIn: https://www.linkedin.com/in/harshbothara24/
 
